@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Image</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 226, 0.2) 0%, transparent 50%);
+            animation: backgroundShift 15s ease-in-out infinite;
+        }
+        
+        @keyframes backgroundShift {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        .image-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .random-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 20px;
+            box-shadow: 
+                0 25px 60px rgba(0, 0, 0, 0.3),
+                0 10px 20px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: imageEntry 1s ease-out;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .random-image:hover {
+            transform: scale(1.02);
+            box-shadow: 
+                0 35px 80px rgba(0, 0, 0, 0.4),
+                0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes imageEntry {
+            0% {
+                opacity: 0;
+                transform: scale(0.8) rotateY(45deg);
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateY(0deg);
+                filter: blur(0px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="image-container">
+        <img id="randomImage" class="random-image" alt="Random Image">
+    </div>
+
+    <script>
+        // Array berisi gambar dari folder gambar/ - trying different path formats
+        const images = [
+            'gambar/random1.png',
+            'gambar/random2.png',
+            'gambar/random3.png',
+            'gambar/random4.png',
+            'gambar/random5.png',
+            'gambar/random6.png',
+            'gambar/random7.png',
+            'gambar/random8.png',
+            'gambar/random9.png',
+            'gambar/random10.png'
+        ];
+        
+        let currentImageIndex = 0;
+        
+        function getRandomImage() {
+            const randomIndex = Math.floor(Math.random() * images.length);
+            currentImageIndex = randomIndex;
+            return images[randomIndex];
+        }
+        
+        function changeImage() {
+            const imageElement = document.getElementById('randomImage');
+            const randomImageUrl = getRandomImage();
+            
+            console.log('Trying to load:', randomImageUrl); // Debug log
+            
+            // Add fade out effect
+            imageElement.style.opacity = '0';
+            imageElement.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                imageElement.src = randomImageUrl;
+                imageElement.onload = function() {
+                    console.log('Image loaded successfully:', randomImageUrl);
+                    imageElement.style.opacity = '1';
+                    imageElement.style.transform = 'scale(1)';
+                };
+                // Handle error if image doesn't exist
+                imageElement.onerror = function() {
+                    console.log('Image not found:', randomImageUrl);
+                    // Try with different path format
+                    const altPath = randomImageUrl.replace('gambar/', './gambar/');
+                    console.log('Trying alternative path:', altPath);
+                    imageElement.src = altPath;
+                };
+            }, 400);
+        }
+        
+        // Load random image saat halaman pertama kali dimuat
+        window.addEventListener('load', function() {
+            changeImage();
+        });
+    </script>
+</body>
+</html>
